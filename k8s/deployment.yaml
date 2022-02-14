@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faceit
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      application: faceit
+  template:
+    metadata:
+      labels:
+        application: faceit
+    spec:
+      containers:
+      - name: faceit-pod
+        image: faceit:stable
+        ports:
+          - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          timeoutSeconds: 5
+          initialDelaySeconds: 90
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          timeoutSeconds: 5
+          initialDelaySeconds: 90
+          periodSeconds: 3
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
